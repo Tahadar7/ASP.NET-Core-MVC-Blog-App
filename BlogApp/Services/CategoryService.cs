@@ -10,12 +10,12 @@ namespace BlogApp.Services
 
         public async Task<List<SelectListItem>> GetCategories()
         {
-            return await context.Categories
-                .Select(c => new SelectListItem
+            return await context.Categories.Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
                     Text = c.Name
-                }).ToListAsync();
+                }
+                ).ToListAsync();
         }
     }
 }

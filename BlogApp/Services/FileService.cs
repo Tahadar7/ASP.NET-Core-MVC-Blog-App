@@ -1,4 +1,5 @@
 using BlogApp.Interfaces;
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
 
 namespace BlogApp.Services
@@ -58,9 +59,17 @@ namespace BlogApp.Services
 
             var filePath = Path.Combine(imagesFolderPath, fileName);
 
-            await using (var stream = new FileStream(filePath, FileMode.Create))
+            try
             {
-                await file.CopyToAsync(stream);
+
+                await using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error uploading file: " + ex.Message);
             }
 
             return "/images/" + fileName;

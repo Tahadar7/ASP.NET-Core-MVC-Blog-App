@@ -2,9 +2,8 @@
 using BlogApp.Interfaces;
 using BlogApp.Models;
 using BlogApp.ViewModels;
+using System.IO;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-
 namespace BlogApp.Controllers
 {
     public class PostController(

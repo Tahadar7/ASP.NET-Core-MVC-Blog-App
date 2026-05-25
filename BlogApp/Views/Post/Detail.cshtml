@@ -1,5 +1,4 @@
-﻿@using BlogApp.ViewModels;
-@model PostDetailViewModel
+﻿@model Post
 
 @{
     ViewData["Title"] = Model.Title;
@@ -84,7 +83,6 @@
                 var postId = @Model.Id;
                 
                 $.ajax({
-                    //https:localhost:7036/Post/AddComment
                     url: '@Url.Action("AddComment","Post")',
                     type: 'POST',
                     contentType: 'application/json',
