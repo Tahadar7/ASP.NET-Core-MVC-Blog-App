@@ -89,6 +89,12 @@ namespace BlogApp.Controllers
             await signInManager.SignOutAsync();
             return RedirectToAction("Index", "Post");
         }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
 

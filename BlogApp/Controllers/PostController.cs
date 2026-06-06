@@ -1,4 +1,5 @@
 ﻿using BlogApp.Data;
+using Microsoft.AspNetCore.Authorization;
 using BlogApp.Interfaces;
 using BlogApp.Models;
 using BlogApp.ViewModels;
@@ -42,6 +43,7 @@ namespace BlogApp.Controllers
         }
 
         [HttpGet]
+        [Authorize (Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             var postViewModel = new PostViewModel
@@ -54,6 +56,7 @@ namespace BlogApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(PostViewModel postViewModel)
         {
             if (!ModelState.IsValid)
@@ -81,6 +84,7 @@ namespace BlogApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -106,6 +110,7 @@ namespace BlogApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(EditViewModel editViewModel)
         {
             if (!ModelState.IsValid)
@@ -123,17 +128,19 @@ namespace BlogApp.Controllers
                 return NotFound();
             }
 
+            // if user uploaded a new image, delete the old one and upload the new one
+
             if (editViewModel.FeatureImage != null)
             {
                 fileService.DeleteFile(postFromDb.FeatureImagePath);
 
-                editViewModel.Post.FeatureImagePath =
+                editViewModel.Post.FeatureImagePath = 
                     await fileService.UploadFileAsync(editViewModel.FeatureImage);
             }
+            // if user did not upload a new image, keep the old one
             else
             {
-                editViewModel.Post.FeatureImagePath =
-                    postFromDb.FeatureImagePath;
+                editViewModel.Post.FeatureImagePath = postFromDb.FeatureImagePath;
             }
 
             await postService.UpdatePostAsync(editViewModel.Post);
@@ -142,6 +149,7 @@ namespace BlogApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var postFromDb = await postService.GetPostByIdAsync(id);
@@ -156,6 +164,7 @@ namespace BlogApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirm(int id)
         {
             var postFromDb = await postService.GetPostByIdAsync(id);
@@ -173,11 +182,12 @@ namespace BlogApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<JsonResult> AddComment([FromBody] Comment comment)
         {
             if (!ModelState.IsValid)
             {
-                return Json(new
+                return Json( new
                 {
                     success = false
                 });
