@@ -1,15 +1,15 @@
-﻿@model IEnumerable<Post>
+﻿@model PostIndexViewModel
     
 @{
     ViewData["Title"] = "Blog Posts";
 }
 
 <div class="text-center m-3">
-    @if(ViewBag.Categories !=null){
-        @foreach(var category in ViewBag.Categories)
+    @if(Model.Categories !=null){
+        @foreach(var category in Model.Categories)
         {
-            <a asp-controller="post" asp-action="Index" asp-route-categoryId = "@category.Id"
-            class="badge bg-warning text-decoration-none ms-2"> @category.Name</a>
+            <a asp-controller="post" asp-action="Index" asp-route-categoryId = "@category.Value"
+            class="badge bg-warning text-decoration-none ms-2"> @category.Text</a>
         }
     }
 </div>
@@ -21,7 +21,7 @@
 }
 
 <div class="row row-cols-3 g-4">
-    @foreach(var post in Model)
+    @foreach(var post in Model.Posts)
     {
         <div class="col">
 

@@ -19,9 +19,15 @@ namespace BlogApp.Controllers
         {
             var posts = await postService.GetAllPostsAsync(categoryId);
 
-            ViewBag.Categories = await categoryService.GetCategories();
+            var categories = await categoryService.GetCategories();
 
-            return View(posts);
+            var viewModel = new PostIndexViewModel
+            {
+                Posts = posts,
+                Categories = categories
+            };
+
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -39,7 +45,12 @@ namespace BlogApp.Controllers
                 return NotFound();
             }
 
-            return View(post);
+            var viewModel = new PostDetailViewModel 
+            {
+                Post = post
+            };
+
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -159,7 +170,13 @@ namespace BlogApp.Controllers
                 return NotFound();
             }
 
-            return View(postFromDb);
+            var viewModel = new PostDeleteViewModel
+            {
+                Id = postFromDb.Id,
+                Title = postFromDb.Title
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]

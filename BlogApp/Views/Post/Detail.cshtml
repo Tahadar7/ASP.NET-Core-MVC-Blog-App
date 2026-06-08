@@ -1,7 +1,7 @@
-﻿@model Post
+﻿@model PostDetailViewModel
 
 @{
-    ViewData["Title"] = Model.Title;
+    ViewData["Title"] = Model.Post.Title;
 }
 <style>
     .content-wrapper {
@@ -21,29 +21,29 @@
 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
 {
 <div class="text-end">
-    <a class="btn btn-secondary my-3" asp-controller="Post" asp-action="Edit" asp-route-id="@Model.Id">Edit Post</a>
-    <a class="btn btn-danger mx-3 my-3" asp-controller="Post" asp-action="Delete" asp-route-id="@Model.Id">Delete
+    <a class="btn btn-secondary my-3" asp-controller="Post" asp-action="Edit" asp-route-id="@Model.Post.Id">Edit Post</a>
+    <a class="btn btn-danger mx-3 my-3" asp-controller="Post" asp-action="Delete" asp-route-id="@Model.Post.Id">Delete
         Post</a>
     </div>
 }
 
     <div class="content-wrapper">
-        <h1>@Model.Title</h1>
+        <h1>@Model.Post.Title</h1>
         <p>
-            <span class="badge bg-primary">By:</span> @Model.Author | <span class="badge bg-primary">
+            <span class="badge bg-primary">By:</span> @Model.Post.Author | <span class="badge bg-primary">
             Published on
-        </span> @Model.PublishedDate.ToString("MMMM dd,yyyy")
+        </span> @Model.Post.PublishedDate.ToString("MMMM dd,yyyy")
     </p>
-    <p><span class="badge bg-secondary">Category</span> @Model.Category.Name</p>
-    <img src="@Model.FeatureImagePath" alt="@Model.Title" class="feature-image" />
+    <p><span class="badge bg-secondary">Category</span> @Model.Post.Category.Name</p>
+    <img src="@Model.Post.FeatureImagePath" alt="@Model.Post.Title" class="feature-image" />
     <hr />
-    <div>@Html.Raw(Model.Content)</div>
+    <div>@Html.Raw(Model.Post.Content)</div>
     <hr />
 
-    @if (Model.Comments.Any())
+    @if (Model.Post.Comments.Any())
     {
         <div id="commentSection">
-            @foreach (var comment in Model.Comments)
+            @foreach (var comment in Model.Post.Comments)
             {
                 <div class="card mb-3 shadow-sm">
                     <div class="card-body">
@@ -87,7 +87,7 @@
                     event.preventDefault();
                     var userName = $("#Username").val();
                     var content = $("#Content").val();
-                    var postId = @Model.Id;
+                    var postId = @Model.Post.Id;
 
                     $.ajax({
                         url: '@Url.Action("AddComment","Post")',
