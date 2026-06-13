@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlogApp.Models
@@ -17,6 +18,7 @@ namespace BlogApp.Models
         public string Content { get; set; }
         [ForeignKey("Post")]
         public int PostId { get; set; }
+        [ValidateNever]
         public Post Post { get; set; }
     }
 }

@@ -18,7 +18,7 @@
         margin-bottom: 20px;
     }
 </style>
-@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+@if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
 {
 <div class="text-end">
     <a class="btn btn-secondary my-3" asp-controller="Post" asp-action="Edit" asp-route-id="@Model.Post.Id">Edit Post</a>
@@ -40,9 +40,9 @@
     <div>@Html.Raw(Model.Post.Content)</div>
     <hr />
 
+<div id="commentSection">
     @if (Model.Post.Comments.Any())
     {
-        <div id="commentSection">
             @foreach (var comment in Model.Post.Comments)
             {
                 <div class="card mb-3 shadow-sm">
@@ -53,19 +53,20 @@
                     </div>
                 </div>
             }
-        </div>
     }
     else
     {
         if (!User.Identity.IsAuthenticated)
         {
-            <p class="text-muted">Login First to Comment.</p>
+            <p class="text-muted" id="noComments">Login First to Comment.</p>
         }
         else
         {
-            <p class="text-muted">No comments yet. Be the first to comment</p>
+            <p class="text-muted" id="noComments">No comments yet. Be the first to comment</p>
         }
     }
+    </div>
+
     
     @if (User.Identity.IsAuthenticated)
     {
@@ -75,7 +76,7 @@
             <div class="form-group">
                 <label for="Username">Name</label>
                 <input for="Username" id="Username" name="Username" required class="form-control" />
-            </div>
+                </div>
 
             <div class="form-group">
                 <label for="Content">Content</label>
@@ -85,7 +86,7 @@
             <button type="submit" class="btn btn-primary mt-2 p-2 rounded">Submit Comment </button>
         </form>
         }
-    </div>
+     </div>
 
     @section Scripts {
         <script>
@@ -107,6 +108,7 @@
                         }),
                         success: function (response) {
                             $('#commentForm')[0].reset();
+                            $('#noComments').remove();
                             $('#commentSection').append(
                                 `
                                 <div class="card mb-3 shadow-sm">
@@ -118,7 +120,10 @@
                                 </div>
                                     `
                             )
-                        }
+                        },
+                        error: function (err) {   
+                                alert('Error: ' + err.status + ' ' + err.statusText);
+            }
                     })
                 });
             });
