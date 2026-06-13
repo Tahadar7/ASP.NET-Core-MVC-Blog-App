@@ -9,8 +9,7 @@ namespace BlogApp.Controllers
 {
     public class PostController(
         IPostService postService,
-        IFileService fileService,
-        ApplicationDbContext context, 
+        IFileService fileService, 
         ICategoryService categoryService)
         : Controller
     {
@@ -57,7 +56,7 @@ namespace BlogApp.Controllers
         [Authorize (Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
-            var postViewModel = new PostViewModel
+            var postViewModel = new PostCreateViewModel
             {
                 Categories = await categoryService.GetCategories()
             };
@@ -68,7 +67,7 @@ namespace BlogApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(PostViewModel postViewModel)
+        public async Task<IActionResult> Create(PostCreateViewModel postViewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -110,7 +109,7 @@ namespace BlogApp.Controllers
                 return NotFound();
             }
 
-            var editViewModel = new EditViewModel
+            var editViewModel = new PostEditViewModel
             {
                 Post = postFromDb,
                 Categories = await categoryService.GetCategories()
@@ -122,7 +121,7 @@ namespace BlogApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(EditViewModel editViewModel)
+        public async Task<IActionResult> Edit(PostEditViewModel editViewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -139,22 +138,24 @@ namespace BlogApp.Controllers
                 return NotFound();
             }
 
+            // map changes onto the already tracked postFromDb object
+
+            postFromDb.Title = editViewModel.Post.Title;
+            postFromDb.Content = editViewModel.Post.Content;
+            postFromDb.Author = editViewModel.Post.Author;
+            postFromDb.CategoryId = editViewModel.Post.CategoryId;
+
             // if user uploaded a new image, delete the old one and upload the new one
 
             if (editViewModel.FeatureImage != null)
             {
                 fileService.DeleteFile(postFromDb.FeatureImagePath);
 
-                editViewModel.Post.FeatureImagePath = 
+                postFromDb.FeatureImagePath = 
                     await fileService.UploadFileAsync(editViewModel.FeatureImage);
             }
-            // if user did not upload a new image, keep the old one
-            else
-            {
-                editViewModel.Post.FeatureImagePath = postFromDb.FeatureImagePath;
-            }
 
-            await postService.UpdatePostAsync(editViewModel.Post);
+            await postService.UpdatePostAsync(postFromDb);
 
             return RedirectToAction(nameof(Index));
         }
