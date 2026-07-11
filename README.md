@@ -105,8 +105,8 @@ cd BlogApp
     "DefaultConnection": "Server=YOUR_SERVER;Database=BlogApp;Trusted_Connection=True;TrustServerCertificate=True"
   },
   "AdminUser": {
-    "Email": "admin@blogapp.com",
-    "Password": "Admin@123"
+    "Email": "your admin email",
+    "Password": "your admin password"
   }
 }
 ```
